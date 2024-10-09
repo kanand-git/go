@@ -24,6 +24,10 @@ type file struct {
 	name string
 }
 
+func (f file) NotAnInterfaceMethod() {
+	fmt.Println("not an interface method of files")
+}
+
 func (f file) Read(b []byte) (int, error) {
 	fmt.Println("reading files and processing them", f.name)
 	return 0, nil
@@ -42,6 +46,12 @@ func (j json) Read(b []byte) (int, error) {
 func DoWork(r Reader) {
 	b := make([]byte, 1024)
 	r.Read(b)
+
+	// type assertion // checking if file struct is present in the interface and doing some file specific task
+	x, ok := r.(file)
+	if ok {
+		x.NotAnInterfaceMethod()
+	}
 }
 
 func main() {

@@ -22,7 +22,7 @@ func (m Conn) Update(usr stores.User) error {
 	return nil
 }
 
-func (m Conn) Delete() error {
+func (m Conn) Delete(usr stores.User) error {
 	fmt.Println("deleting in mysql")
 	return nil
 }
