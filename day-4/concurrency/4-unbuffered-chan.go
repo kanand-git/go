@@ -15,7 +15,7 @@ func main() {
 
 	ch := make(chan int) // unbuffered chan // it has size zero
 	//i := go dowork() // we can't accept the returned values from the goroutine
-	wg.Add(1)
+	//wg.Add(1)
 	go doWork(ch, wg)
 
 	//recv over the channel
