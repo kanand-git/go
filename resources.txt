@@ -3,3 +3,12 @@ pkg.go.dev // docs
 https://go.dev/doc/effective_go
 https://go.dev/ref/spec
 
+go get moduleName
+// when downloading any new project run this command
+// it automatically downloads all the dependency for the project
+go mod tidy
+
+
+openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
+openssl rsa -in private.pem -pubout -out pubkey.pem
+
