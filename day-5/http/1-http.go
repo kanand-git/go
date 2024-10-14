@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -41,6 +43,18 @@ func FindUser(w http.ResponseWriter, r *http.Request) {
 
 	//b, err := json.Marshal(user) // Marshal stores the json output in the memory
 	//w.Write(b)
+	time.Sleep(3 * time.Second)
+	select {
+	case <-r.Context().Done():
+		fmt.Println("client cancelled the request")
+		return
+	default:
+		// default is always true ,if no other case are true
+		// client is still connected, so lets move on further
+	}
+
+	// setting status code
+	w.WriteHeader(http.StatusOK)
 
 	// NewEncoder can directly write json to the writer
 	err := json.NewEncoder(w).Encode(user)
@@ -49,6 +63,5 @@ func FindUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return // don't forget to return
 	}
-	// setting status code
-	w.WriteHeader(http.StatusOK)
+
 }
