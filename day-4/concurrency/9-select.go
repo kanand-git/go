@@ -11,7 +11,7 @@ func main() {
 	wgWorker := new(sync.WaitGroup)
 
 	// NOTE:= if using buffered channel, don't use for select, this pattern would simply fail
-	// use seperate go routines to receive the values, and close the channel after sending ,
+	// use separate go routines to receive the values, and close the channel after sending ,
 	//in case of buffered channel
 	c1 := make(chan int)
 	c2 := make(chan int)
