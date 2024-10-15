@@ -32,6 +32,7 @@ func BenchmarkOptimizedAnalyzeText(b *testing.B) {
 
 //below command generates memory profile
 //go test -run none -bench . -benchtime 3s -benchmem -v -memprofile p.out
+//go test -run none -bench . -benchtime 3s -benchmem -v -cpuprofile p.out
 // go tool pprof p.out
 // list AnalyzeText
 // top 5
