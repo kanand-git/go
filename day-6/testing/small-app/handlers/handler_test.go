@@ -40,6 +40,8 @@ func TestGetUser(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// NewRecorder gives us implementation of response writer interface
 			rec := httptest.NewRecorder()
+
+			// constructing the new http request
 			r, err := http.NewRequest(http.MethodGet, "localhost:8080/user?"+tc.query, nil)
 			require.NoError(t, err, "problem in creating request")
 
