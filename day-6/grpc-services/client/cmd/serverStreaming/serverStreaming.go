@@ -3,6 +3,7 @@ package main
 import (
 	pb "client/gen/proto"
 	"context"
+	"errors"
 	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -32,16 +33,20 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// running infinite loop to recv all the responses from the stream
 	for {
 		post, err := stream.Recv()
-		if err == io.EOF {
+		// using errors.Is to check if the stream has finished
+		if errors.Is(err, io.EOF) {
 			break
 		}
+		//any other error we will quit
 		if err != nil {
 			log.Println(err)
 			return
 		}
 		select {
+		// checking if server cancelled the request
 		case <-stream.Context().Done():
 			fmt.Println("server cancelled the request ")
 			return
