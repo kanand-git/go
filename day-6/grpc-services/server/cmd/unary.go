@@ -13,14 +13,17 @@ import (
 func (u userService) Signup(ctx context.Context, req *proto.SignupRequest) (*proto.SignupResponse, error) {
 	nu := req.GetUser()
 	if nu == nil {
+		// use status.Error or Errorf to send error messages on grpc services
 		return nil, status.Error(codes.Internal, "invalid user")
 	}
 
 	var user models.User
-	user.Name = nu.Name
+	user.Name = nu.User
 	user.Email = nu.Email
 	user.Roles = nu.Roles
 	v := validator.New() // Creating a new validator instance
+
+	// validating struct against the field tags specified by go validator package
 	err := v.Struct(user)
 
 	if err != nil {
@@ -29,6 +32,8 @@ func (u userService) Signup(ctx context.Context, req *proto.SignupRequest) (*pro
 	}
 
 	fmt.Println(user)
+
+	// sending the success resp
 	return &proto.SignupResponse{Result: user.Email + "created"}, nil
 
 }

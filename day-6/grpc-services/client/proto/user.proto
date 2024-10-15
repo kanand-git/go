@@ -4,7 +4,7 @@ package v1;
 
 //Sets the Go package where structs generated from this .proto will be
 //placed. If omitted, the Go package will be derived from the following:
-option go_package = "server/gen/proto";
+option go_package = "client/gen/proto";
 
 
 //unary
@@ -21,10 +21,10 @@ message User {
 
 message SignupRequest{
   User user = 1;
-// you can add more fields here to pass as input
+  // you can add more fields here to pass as input
 }
 message SignupResponse{
- string result =1;
+  string result =1;
   // you can add more fields here to pass as input
 }
 
