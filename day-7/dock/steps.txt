@@ -1,0 +1,3 @@
+cobra-cli init --viper
+cobra-cli add container
+cobra-cli add run -p containerCmd
