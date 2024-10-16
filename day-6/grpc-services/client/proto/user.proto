@@ -43,10 +43,24 @@ message GetPostsResponse {
 }
 
 
+//client streaming
+message CreatePostRequest {
+  repeated Post posts = 1;
+}
+
+message CreatePostResponse {
+  string result = 1;
+}
+
+
+
 service UserService {
   //unary
   rpc Signup(SignupRequest) returns (SignupResponse) ;
 
   //server streaming
   rpc GetPosts(GetPostsRequest) returns (stream GetPostsResponse);
+
+  //client streaming
+  rpc CreatePost(stream CreatePostRequest) returns (CreatePostResponse);
 }

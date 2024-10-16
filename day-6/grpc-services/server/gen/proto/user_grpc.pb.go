@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_Signup_FullMethodName   = "/v1.UserService/Signup"
-	UserService_GetPosts_FullMethodName = "/v1.UserService/GetPosts"
+	UserService_Signup_FullMethodName     = "/v1.UserService/Signup"
+	UserService_GetPosts_FullMethodName   = "/v1.UserService/GetPosts"
+	UserService_CreatePost_FullMethodName = "/v1.UserService/CreatePost"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -31,6 +32,8 @@ type UserServiceClient interface {
 	Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*SignupResponse, error)
 	// server streaming
 	GetPosts(ctx context.Context, in *GetPostsRequest, opts ...grpc.CallOption) (UserService_GetPostsClient, error)
+	// client streaming
+	CreatePost(ctx context.Context, opts ...grpc.CallOption) (UserService_CreatePostClient, error)
 }
 
 type userServiceClient struct {
@@ -82,6 +85,40 @@ func (x *userServiceGetPostsClient) Recv() (*GetPostsResponse, error) {
 	return m, nil
 }
 
+func (c *userServiceClient) CreatePost(ctx context.Context, opts ...grpc.CallOption) (UserService_CreatePostClient, error) {
+	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[1], UserService_CreatePost_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &userServiceCreatePostClient{stream}
+	return x, nil
+}
+
+type UserService_CreatePostClient interface {
+	Send(*CreatePostRequest) error
+	CloseAndRecv() (*CreatePostResponse, error)
+	grpc.ClientStream
+}
+
+type userServiceCreatePostClient struct {
+	grpc.ClientStream
+}
+
+func (x *userServiceCreatePostClient) Send(m *CreatePostRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *userServiceCreatePostClient) CloseAndRecv() (*CreatePostResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(CreatePostResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -90,6 +127,8 @@ type UserServiceServer interface {
 	Signup(context.Context, *SignupRequest) (*SignupResponse, error)
 	// server streaming
 	GetPosts(*GetPostsRequest, UserService_GetPostsServer) error
+	// client streaming
+	CreatePost(UserService_CreatePostServer) error
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -102,6 +141,9 @@ func (UnimplementedUserServiceServer) Signup(context.Context, *SignupRequest) (*
 }
 func (UnimplementedUserServiceServer) GetPosts(*GetPostsRequest, UserService_GetPostsServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetPosts not implemented")
+}
+func (UnimplementedUserServiceServer) CreatePost(UserService_CreatePostServer) error {
+	return status.Errorf(codes.Unimplemented, "method CreatePost not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -155,6 +197,32 @@ func (x *userServiceGetPostsServer) Send(m *GetPostsResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _UserService_CreatePost_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServiceServer).CreatePost(&userServiceCreatePostServer{stream})
+}
+
+type UserService_CreatePostServer interface {
+	SendAndClose(*CreatePostResponse) error
+	Recv() (*CreatePostRequest, error)
+	grpc.ServerStream
+}
+
+type userServiceCreatePostServer struct {
+	grpc.ServerStream
+}
+
+func (x *userServiceCreatePostServer) SendAndClose(m *CreatePostResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *userServiceCreatePostServer) Recv() (*CreatePostRequest, error) {
+	m := new(CreatePostRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -172,6 +240,11 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "GetPosts",
 			Handler:       _UserService_GetPosts_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "CreatePost",
+			Handler:       _UserService_CreatePost_Handler,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "proto/user.proto",
