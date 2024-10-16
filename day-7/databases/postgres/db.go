@@ -96,7 +96,9 @@ func (c *Conf) insertUser(ctx context.Context, name, email string, age int) int 
 	// don't hardcode the values, or use the string in construction, sql injection can happen
 	query := `INSERT INTO users (name, email, age) VALUES ($1, $2, $3) RETURNING id`
 	var id int
-
+	//tx err:= c.db.Begin()
+	//tx.Commit()
+	//tx.Rollback()
 	// Execute the query to insert the user and get the new user's ID
 	//QueryRow returns one row as output
 	err := c.db.QueryRow(ctx, query, name, email, age).Scan(&id)
