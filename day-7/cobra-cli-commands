@@ -1,0 +1,10 @@
+// after navigating to the root of the project, run below command
+cobra-cli init
+
+// this would add manage to the rootCmd, or your app name
+cobra-cli add manage
+
+
+// repo would be the subcommand of the manage
+cobra-cli add repo -p manage
+
