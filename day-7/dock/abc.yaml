@@ -1,0 +1,13 @@
+imageName: nginx
+cfg:
+  image: nginx
+  exposed_ports:
+    80/tcp: {}
+hostConfig:
+  port_bindings:
+    80/tcp:
+      - HostIP: "0.0.0.0"
+        HostPort: "8080"
+  restart_policy:
+    name: on-failure
+    maximum_retry_count: 4
