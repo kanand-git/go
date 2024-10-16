@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"github/repo"
 )
 
 // createCmd represents the create command
@@ -37,12 +38,27 @@ We can pass repository name, description and visibility as arguments.`,
 		}
 
 		fmt.Println("Creating new repository on github")
-		fmt.Println(name, description, private, token)
+		r := repo.Request{
+			Name:    name,
+			Desc:    description,
+			Private: private,
+			Token:   token,
+		}
+		res, err := repo.CreateRepo(r)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println(res)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(createCmd)
+
+	// run the command like below
+	// export token=tokenValue
+	// ./github create -n "test-123" -t=$token
 
 	//createCmd.Flags().StringP // setting up flags for the app, StringP has additional parameter to accept short form of the flag as well
 	createCmd.Flags().StringP("name", "n", "", "name of the repository")
@@ -50,7 +66,7 @@ func init() {
 	createCmd.Flags().BoolP("private", "p", true, "visibility of the repository, private is by default , set it to false to make it public")
 	createCmd.Flags().StringP("token", "t", "", "GitHub authentication token")
 
-	// marking the flags as required, so user must pass otherwise cli would quite
+	// marking the flags as required, so user must pass otherwise cli would quit
 	err := createCmd.MarkFlagRequired("name")
 	if err != nil {
 		fmt.Println(err)
